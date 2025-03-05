@@ -31,33 +31,15 @@ function App2() {
         setUplist(data);
       };
       addToList(name);
-
-      // newList.push(name);
-
-      // setUplist(newList);
     }
     setName("");
   };
   const handleSkip = async () => {
-    // let prevScratchlist = [...scratchList];
-    // if (scratchList.length > 3) {
-    //   prevScratchlist = [...scratchList].slice(0, 3);
-    // }
-    // prevScratchlist.unshift(uplist[0]);
-    // setScratchList(prevScratchlist);
-    // const newList = [...uplist].slice(1);
-    // setUplist(newList);
-    // setName("");
-
     const response = await fetch(`${URL}skip`);
     const data = await response.json();
-    console.log(data);
-    setUplist((prev) => data);
+    setUplist(data);
   };
   const handleRemoval = (name) => {
-    // const newList = [...uplist].filter((item) => item !== name);
-    // setUplist(newList);
-
     const removeName = async (name) => {
       const response = await fetch(`${URL}delete/${name}`);
       const data = await response.json();
@@ -74,9 +56,7 @@ function App2() {
       setUplist(data);
     };
     insertPerson(name, position);
-    // const newList = [...uplist];
-    // newList.splice(position - 1, 0, name);
-    // setUplist(newList);
+
     setName("");
   };
 
@@ -90,13 +70,6 @@ function App2() {
       setUplist(data);
     };
     undoRemoval();
-    // if (scratchList.length < 1) return;
-    // const newUplist = [...uplist];
-    // newUplist.unshift(scratchList[0]);
-    // let newScratchList = [...scratchList];
-    // newScratchList.shift();
-    // setUplist(newUplist);
-    // setScratchList(newScratchList);
   };
   const handleReset = async () => {
     const response = await fetch(`${URL}reset`);
