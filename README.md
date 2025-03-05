@@ -9,3 +9,4 @@ Currently, two official plugins are available:
 # newuplist
 # newuplist
 # new_uplist
+# new_uplist
