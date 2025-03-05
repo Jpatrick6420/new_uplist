@@ -7,12 +7,11 @@ import TimeWidget from "./components/TimeWidget";
 function App2() {
   const [uplist, setUplist] = useState([]);
   const [name, setName] = useState("");
-  const [scratchList, setScratchList] = useState([]);
   const [modal, setModal] = useState(false);
-  const URL = "http://jpatrick6420.pythonanywhere.com/";
+  const URL = "https://jpatrick6420.pythonanywhere.com/";
   useEffect(function () {
     const getData = async () => {
-      const response = await fetch("http://jpatrick6420.pythonanywhere.com/");
+      const response = await fetch("https://jpatrick6420.pythonanywhere.com/");
       const data = await response.json();
       setUplist(data);
     };
@@ -25,7 +24,7 @@ function App2() {
     if (!newList.includes(name)) {
       const addToList = async (name) => {
         const response = await fetch(
-          `http://jpatrick6420.pythonanywhere.com/add/${name}`
+          `https://jpatrick6420.pythonanywhere.com/add/${name}`
         );
         const data = await response.json();
 
