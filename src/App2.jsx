@@ -4,33 +4,35 @@ import { titleCase } from "./helper_functions/helpers";
 import PositionInput from "./components/PositionInput";
 import NameInput from "./components/NameInput";
 import TimeWidget from "./components/TimeWidget";
+import StaticButton from "./components/StaticButton";
 function App2() {
   const [uplist, setUplist] = useState([]);
   const [name, setName] = useState("");
   const [modal, setModal] = useState(false);
+  const [uplistIsUpdated, setUplistIsUpdated] = useState(false);
   const URL = "https://jpatrick6420.pythonanywhere.com/";
+  // const localURL = "http://127.0.0.1:5000/";
+
+  const getData = async () => {
+    const response = await fetch(URL);
+    const data = await response.json();
+    setUplist(data);
+  };
+
   useEffect(function () {
-    const getData = async () => {
-      const response = await fetch("https://jpatrick6420.pythonanywhere.com/");
-      const data = await response.json();
-      setUplist(data);
-    };
     getData();
   }, []);
 
-  const handleAddToUplist = (name) => {
+  const handleAddToUplist = async (name) => {
     if (name == "") return;
-    const newList = [...uplist];
-    if (!newList.includes(name)) {
-      const addToList = async (name) => {
-        const response = await fetch(
-          `https://jpatrick6420.pythonanywhere.com/add/${name}`
-        );
-        const data = await response.json();
+    const newName = name.toLowerCase();
 
-        setUplist(data);
-      };
-      addToList(name);
+    const newList = [...uplist];
+    if (!newList.includes(newName)) {
+      const response = await fetch(`${URL}/add/${newName}`);
+      const data = await response.json();
+
+      setUplist(data);
     }
     setName("");
   };
@@ -39,6 +41,17 @@ function App2() {
     const data = await response.json();
     setUplist(data);
   };
+
+  const toggleUpdate = async () => {
+    await getData();
+    setUplistIsUpdated(true);
+    const uplistIsCurrent = () => {
+      setUplistIsUpdated(false);
+    };
+
+    setTimeout(uplistIsCurrent, 1000 * 8);
+  };
+
   const handleRemoval = (name) => {
     const removeName = async (name) => {
       const response = await fetch(`${URL}delete/${name}`);
@@ -82,7 +95,7 @@ function App2() {
         <TimeWidget />
         <NameInput handleChange={setName} inputValue={name} />
 
-        {modal && (
+        {uplistIsUpdated && modal && (
           <PositionInput
             label="Position"
             handler={handleInsert}
@@ -91,49 +104,45 @@ function App2() {
           />
         )}
         <div className="grid grid-cols-3 gap-2 mt-2">
-          {!modal && (
+          {uplistIsUpdated && !modal && (
             <ActionButton
-              className="bg-blue-500 hover:bg-blue-400"
+              color="blue"
               handleClick={handleAddToUplist}
               label="Add"
-              type="primary"
               item={name}
             />
           )}
-          {!modal && (
-            <ActionButton
+          {uplistIsUpdated && !modal && (
+            <StaticButton
               handleClick={handleSkip}
               label="Take Up"
-              type="skip"
-              item=""
+              color="red"
             />
           )}
 
-          {!modal && (
+          {uplistIsUpdated && !modal && (
             <ActionButton
               handleClick={handleRemoval}
               label="Scratch"
-              type="remove"
+              color="amber"
               item={name}
             />
           )}
-          {!modal && (
-            <ActionButton
+          {uplistIsUpdated && !modal && (
+            <StaticButton
               handleClick={handleUndo}
               label="Undo"
-              type="undo"
-              item=""
+              color="violet"
             />
           )}
-          {!modal && (
-            <ActionButton
+          {uplistIsUpdated && !modal && (
+            <StaticButton
               handleClick={handleReset}
               label="Reset"
-              type="undo"
-              item=""
+              color="emerald"
             />
           )}
-          {!modal && (
+          {uplistIsUpdated && !modal && (
             <button
               onClick={() => {
                 toggleModal();
@@ -142,6 +151,16 @@ function App2() {
             >
               Insert
             </button>
+          )}
+          {!uplistIsUpdated && (
+            <div className="w-full col-span-3 my-2">
+              <button
+                onClick={() => toggleUpdate()}
+                className=" bg-green-500 hover:bg-green-300 px-1 py-0.5 text-stone-100 w-full"
+              >
+                Update
+              </button>
+            </div>
           )}
         </div>
         <ul>

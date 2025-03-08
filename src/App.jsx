@@ -1,124 +1,151 @@
-import { useReducer, useState } from "react";
-import { titleCase } from "./helper_functions/helpers";
-import "./index.css";
+import { useState, useEffect } from "react";
 import ActionButton from "./components/ActionButton";
-import Modal from "./components/Modal";
-
-const init = { name: "", uplist: [], insertModal: false };
-
-function reducer(state, action) {
-  switch (action.type) {
-    case "nameChange":
-      return { ...state, name: action.payload };
-    case "addToUplist":
-      return {
-        ...state,
-        uplist: [...state.uplist, { name: action.payload }],
-      };
-    case "skipPerson":
-      if (state.uplist.length > 0) {
-        const newList = state.uplist.slice(1);
-        return { ...state, uplist: newList };
-      } else {
-        return { ...state };
-      }
-    case "removePerson":
-      const newList = state.uplist.filter(
-        (item) => item.name !== action.payload
-      );
-      return { ...state, uplist: newList };
-    case "insertPerson":
-      const updatedList = [...state.uplist].splice(
-        action.payload.number - 1,
-        0,
-        action.payload.name
-      );
-      return { ...state, uplist: updatedList };
-    case "toggleModal":
-      return { ...state, insertModal: !state.insertModal };
-    default:
-      return state;
-  }
-}
-
+import { titleCase } from "./helper_functions/helpers";
+import PositionInput from "./components/PositionInput";
+import NameInput from "./components/NameInput";
+import TimeWidget from "./components/TimeWidget";
 function App() {
+  const [uplist, setUplist] = useState([]);
   const [name, setName] = useState("");
-  const [state, dispatch] = useReducer(reducer, init);
+  const [modal, setModal] = useState(false);
+  const URL = "https://jpatrick6420.pythonanywhere.com/";
+  // const localURL = "http://127.0.0.1:5000/";
+  useEffect(function () {
+    const getData = async () => {
+      const response = await fetch(URL);
+      const data = await response.json();
+      setUplist(data);
+    };
+    getData();
+  }, []);
 
-  const handleAddToUplist = (name) => {
+  const handleAddToUplist = async (name) => {
     if (name == "") return;
-    const names = state.uplist.map((item) => item.name);
-    const uniqueNames = new Set(names);
-    if (Array.from(uniqueNames).includes(name)) {
-      setName("");
-      return;
+    const newName = name.toLowerCase();
+
+    const newList = [...uplist];
+    if (!newList.includes(newName)) {
+      const response = await fetch(`${URL}/add/${newName}`);
+      const data = await response.json();
+
+      setUplist(data);
     }
-    dispatch({ type: "addToUplist", payload: name });
     setName("");
   };
-  const handleSkip = () => {
-    dispatch({ type: "skipPerson" });
+  const handleSkip = async () => {
+    const response = await fetch(`${URL}skip`);
+    const data = await response.json();
+    setUplist(data);
   };
   const handleRemoval = (name) => {
-    dispatch({ type: "removePerson", payload: name });
+    const removeName = async (name) => {
+      const response = await fetch(`${URL}delete/${name}`);
+      const data = await response.json();
+      setUplist(data);
+    };
+    removeName(name);
+
     setName("");
   };
-  const handleInsert = (name) => {
-    dispatch({ type: "insertPerson", payload: name });
+  const handleInsert = (name, position) => {
+    const insertPerson = async (userName, userPosition) => {
+      const response = await fetch(`${URL}insert/${userName}/${userPosition}`);
+      const data = await response.json();
+      setUplist(data);
+    };
+    insertPerson(name, position);
+
+    setName("");
   };
+
   const toggleModal = () => {
-    dispatch({ type: "toggleModal" });
+    setModal((prev) => !prev);
+  };
+  const handleUndo = () => {
+    const undoRemoval = async () => {
+      const response = await fetch(`${URL}undo`);
+      const data = await response.json();
+      setUplist(data);
+    };
+    undoRemoval();
+  };
+  const handleReset = async () => {
+    const response = await fetch(`${URL}reset`);
+    const data = await response.json();
+    setUplist(data);
   };
   return (
     <section className="flex justify-center items-center min-w-full min-h-[100dvh]">
       <section className="border-blue-200 border-2 p-2 relative">
-        {state.insertModal && (
-          <Modal list={state.uplist} name={name} dispatch={dispatch} />
+        <TimeWidget />
+        <NameInput handleChange={setName} inputValue={name} />
+
+        {modal && (
+          <PositionInput
+            label="Position"
+            handler={handleInsert}
+            nameInput={name}
+            toggleModal={toggleModal}
+          />
         )}
-        <label className="text-md mr-2">Name</label>
-        <input
-          type="text"
-          className="outline-2 outline-gray-900 px-1 py-0.5 text-sm"
-          value={name}
-          onChange={(e) => {
-            setName(e.target.value);
-          }}
-        />
-        <div className="flex justify-around gap-2 mt-2">
-          <ActionButton
-            className="bg-blue-500 hover:bg-blue-400"
-            handleClick={handleAddToUplist}
-            label="Add"
-            type="primary"
-            item={name}
-          />
-          <ActionButton
-            handleClick={handleSkip}
-            label="skip"
-            type="skip"
-            item=""
-          />
-          <ActionButton
-            handleClick={handleRemoval}
-            label="Scratch"
-            type="remove"
-            item={name}
-          />
-          <button
-            onClick={() => {
-              toggleModal();
-            }}
-            className="bg-teal-500 hover:bg-teal-300 px-1 py-0.5 text-stone-100"
-          >
-            Insert
-          </button>
+        <div className="grid grid-cols-3 gap-2 mt-2">
+          {!modal && (
+            <ActionButton
+              className="bg-blue-500 hover:bg-blue-400"
+              handleClick={handleAddToUplist}
+              label="Add"
+              type="primary"
+              item={name}
+            />
+          )}
+          {!modal && (
+            <ActionButton
+              handleClick={handleSkip}
+              label="Take Up"
+              type="skip"
+              item=""
+            />
+          )}
+
+          {!modal && (
+            <ActionButton
+              handleClick={handleRemoval}
+              label="Scratch"
+              type="remove"
+              item={name}
+            />
+          )}
+          {!modal && (
+            <ActionButton
+              handleClick={handleUndo}
+              label="Undo"
+              type="undo"
+              item=""
+            />
+          )}
+          {!modal && (
+            <ActionButton
+              handleClick={handleReset}
+              label="Reset"
+              type="undo"
+              item=""
+            />
+          )}
+          {!modal && (
+            <button
+              onClick={() => {
+                toggleModal();
+              }}
+              className="bg-teal-500 hover:bg-teal-300 px-1 py-0.5 text-stone-100"
+            >
+              Insert
+            </button>
+          )}
         </div>
         <ul>
-          {state.uplist.length !== 0 &&
-            state.uplist.map((item, idx) => {
-              return (
-                <li key={idx + 1}>{`${idx + 1}) ${titleCase(item.name)}`}</li>
-              );
+          {uplist.length !== 0 &&
+            uplist.map((item, idx) => {
+              return <li key={idx + 1}>{`${idx + 1}) ${titleCase(item)}`}</li>;
             })}
         </ul>
       </section>
