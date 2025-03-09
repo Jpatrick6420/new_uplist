@@ -5,9 +5,12 @@ function StaticButton({ label, handleClick, color }) {
     red: "bg-red-500 hover:bg-red-400",
     violet: "bg-violet-500 hover:bg-violet-400",
     emerald: "bg-emerald-500 hover:bg-emerald-400",
+    amber: "bg-amber-500 hover:bg-amber-400",
   };
 
-  const buttonClass = `px-1 py-0.5 text-stone-100 w-full bg-green-500 hover:bg-green-400`;
+  const buttonClass = `px-1 py-0.5 text-stone-100 w-full ${
+    colorClasses[color] || "bg-green-500 hover:bg-green-400"
+  }`;
   return (
     <div className="w-full">
       <button onClick={handleClick} className={buttonClass}>
