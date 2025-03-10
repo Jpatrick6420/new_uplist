@@ -7,8 +7,8 @@ function App() {
   const [uplist, setUplist] = useState([]);
   const [name, setName] = useState("");
 
-  // const URL = "https://jpatrick6420.pythonanywhere.com/";
-  const localURL = "http://127.0.0.1:5000/";
+  const URL = "https://jpatrick6420.pythonanywhere.com/";
+  // const localURL = "http://127.0.0.1:5000/";
 
   const getData = async () => {
     const response = await fetch(URL, { method: "GET" });
