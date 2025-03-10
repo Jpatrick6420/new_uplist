@@ -7,3 +7,7 @@ export const titleCase = (name) => {
   });
   return capitalized.join(" ");
 };
+
+export const formatInput = (item) => {
+  return item.trim().toLowerCase();
+};
