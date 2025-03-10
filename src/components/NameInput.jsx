@@ -1,6 +1,8 @@
+/* eslint-disable react/prop-types */
+
 function NameInput({ inputValue, handleChange }) {
   return (
-    <div className="grid grid-cols-5">
+    <div className="grid grid-cols-5 px-2 items-center">
       <label className="text-md mr-2">Name</label>
       <input
         type="text"

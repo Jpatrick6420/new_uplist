@@ -5,6 +5,9 @@ import PositionInput from "./components/PositionInput";
 import NameInput from "./components/NameInput";
 import TimeWidget from "./components/TimeWidget";
 import StaticButton from "./components/StaticButton";
+
+const BUTTONSTIMEOUT = 10;
+
 function App2() {
   const [uplist, setUplist] = useState([]);
   const [name, setName] = useState("");
@@ -49,7 +52,7 @@ function App2() {
       setUplistIsUpdated(false);
     };
 
-    setTimeout(uplistIsCurrent, 1000 * 8);
+    setTimeout(uplistIsCurrent, 1000 * BUTTONSTIMEOUT);
   };
 
   const handleRemoval = (name) => {
@@ -92,8 +95,8 @@ function App2() {
     setUplist(data);
   };
   return (
-    <section className="flex justify-center items-center min-w-full min-h-[100dvh]">
-      <section className="border-blue-200 border-2 p-2 relative">
+    <section className="flex justify-center items-center min-w-full min-h-[100dvh] bg-blue-200">
+      <section className="border-blue-200 border-2 p-2 relative bg-stone-100 shadow-md shadow-gray-900">
         <TimeWidget uplist={uplist} />
         <NameInput handleChange={setName} inputValue={name} />
 
@@ -165,7 +168,7 @@ function App2() {
             </div>
           )}
         </div>
-        <ul>
+        <ul className="pt-2">
           {uplist.length !== 0 &&
             uplist.map((item, idx) => {
               return <li key={idx + 1}>{`${idx + 1}) ${titleCase(item)}`}</li>;
