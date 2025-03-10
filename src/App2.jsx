@@ -25,7 +25,7 @@ function App2() {
 
   const handleAddToUplist = async (name) => {
     if (name == "") return;
-    const newName = name.toLowerCase();
+    const newName = name.trim().toLowerCase();
 
     const newList = [...uplist];
     if (!newList.includes(newName)) {
@@ -54,7 +54,7 @@ function App2() {
 
   const handleRemoval = (name) => {
     const removeName = async (name) => {
-      const response = await fetch(`${URL}delete/${name}`);
+      const response = await fetch(`${URL}delete/${name.trim().toLowerCase()}`);
       const data = await response.json();
       setUplist(data);
     };
@@ -64,7 +64,9 @@ function App2() {
   };
   const handleInsert = (name, position) => {
     const insertPerson = async (userName, userPosition) => {
-      const response = await fetch(`${URL}insert/${userName}/${userPosition}`);
+      const response = await fetch(
+        `${URL}insert/${userName.trim().toLowerCase()}/${userPosition}`
+      );
       const data = await response.json();
       setUplist(data);
     };
@@ -92,7 +94,7 @@ function App2() {
   return (
     <section className="flex justify-center items-center min-w-full min-h-[100dvh]">
       <section className="border-blue-200 border-2 p-2 relative">
-        <TimeWidget />
+        <TimeWidget uplist={uplist} />
         <NameInput handleChange={setName} inputValue={name} />
 
         {uplistIsUpdated && modal && (

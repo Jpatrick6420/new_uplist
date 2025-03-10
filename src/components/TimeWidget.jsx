@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+/* eslint-disable react/prop-types */
 
-function TimeWidget() {
+function TimeWidget({ uplist }) {
   const now = new Date();
   const dateString = now.toLocaleDateString("en-US", {
     month: "short",
@@ -9,20 +10,21 @@ function TimeWidget() {
   const [time, setTime] = useState(
     now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
   );
+
   const [currentDate, setCurrentDate] = useState(dateString);
 
-  useEffect(function () {
-    const timeInterval = setInterval(function () {
-      const rightNow = new Date();
-      setTime(
-        rightNow.toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-      );
-    }, 1000);
-    return () => clearInterval(timeInterval);
-  }, []);
+  // useEffect(function () {
+  //   const timeInterval = setInterval(function () {
+  //     const rightNow = new Date();
+  //     setTime(
+  //       rightNow.toLocaleTimeString("en-US", {
+  //         hour: "2-digit",
+  //         minute: "2-digit",
+  //       })
+  //     );
+  //   }, 1000);
+  //   return () => clearInterval(timeInterval);
+  // }, []);
 
   useEffect(() => {
     const updateDate = () => {
@@ -46,15 +48,23 @@ function TimeWidget() {
     };
     updateDate();
   }, []);
-  setInterval(function () {
-    const currentTime = new Date();
-    const date = currentTime.toLocaleDateString("us-EN", {
-      month: "short",
-      day: "numeric",
-    });
-    setCurrentDate(date);
-  }, 1000 * 60 * 60 * 24);
+  // setInterval(function () {
+  //   const currentTime = new Date();
+  //   const date = currentTime.toLocaleDateString("us-EN", {
+  //     month: "short",
+  //     day: "numeric",
+  //   });
+  //   setCurrentDate(date);
+  // }, 1000 * 60 * 60 * 24);
 
+  useEffect(
+    function () {
+      const now = new Date();
+      const formattedNow = now.toLocaleTimeString("en-US");
+      setTime(formattedNow);
+    },
+    [uplist]
+  );
   return (
     <div className="text-center my-2">
       <p>{currentDate}</p>
