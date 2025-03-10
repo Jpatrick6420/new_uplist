@@ -29,7 +29,9 @@ function ButtonSection({ getData, uplist, setUplist, setName, name, URL }) {
 
     const newList = [...uplist];
     if (!newList.includes(newName)) {
-      const response = await fetch(`${URL}/add/${newName}`);
+      const response = await fetch(`${URL}/add/${newName}`, {
+        method: "PATCH",
+      });
       const data = await response.json();
 
       setUplist(data);
@@ -37,13 +39,15 @@ function ButtonSection({ getData, uplist, setUplist, setName, name, URL }) {
     setName("");
   };
   const handleSkip = async () => {
-    const response = await fetch(`${URL}skip`);
+    const response = await fetch(`${URL}skip`, { method: "PATCH" });
     const data = await response.json();
     setUplist(data);
   };
   const handleRemoval = (name) => {
     const removeName = async (name) => {
-      const response = await fetch(`${URL}delete/${formatInput(name)}`);
+      const response = await fetch(`${URL}delete/${formatInput(name)}`, {
+        method: "DELETE",
+      });
       const data = await response.json();
       setUplist(data);
     };
@@ -54,7 +58,8 @@ function ButtonSection({ getData, uplist, setUplist, setName, name, URL }) {
   const handleInsert = (name, position) => {
     const insertPerson = async (userName, userPosition) => {
       const response = await fetch(
-        `${URL}insert/${formatInput(userName)}/${userPosition}`
+        `${URL}insert/${formatInput(userName)}/${userPosition}`,
+        { method: "PATCH" }
       );
       const data = await response.json();
       setUplist(data);
@@ -69,14 +74,14 @@ function ButtonSection({ getData, uplist, setUplist, setName, name, URL }) {
   };
   const handleUndo = () => {
     const undoRemoval = async () => {
-      const response = await fetch(`${URL}undo`);
+      const response = await fetch(`${URL}undo`, { method: "PATCH" });
       const data = await response.json();
       setUplist(data);
     };
     undoRemoval();
   };
   const handleReset = async () => {
-    const response = await fetch(`${URL}reset`);
+    const response = await fetch(`${URL}reset`, { method: "PATCH" });
     const data = await response.json();
     setUplist(data);
   };
