@@ -20,7 +20,7 @@ function App() {
   }, []);
 
   return (
-    <section className="flex justify-center items-center max-w-screen min-h-[100dvh] bg-blue-200 ">
+    <section className="flex justify-center items-center max-w-screen min-h-[100dvh] bg-blue-200 overflow-x-hidden ">
       <section className="border-blue-200 border-2 p-2 relative bg-stone-100 shadow-lg shadow-gray-900">
         <TimeWidget />
         <NameInput handleChange={setName} inputValue={name} />
