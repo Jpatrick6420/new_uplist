@@ -11,7 +11,7 @@ function App() {
   const localURL = "http://127.0.0.1:5000/";
 
   const getData = async () => {
-    const response = await fetch(URL);
+    const response = await fetch(URL, { method: "GET" });
     const data = await response.json();
     setUplist(data);
   };
