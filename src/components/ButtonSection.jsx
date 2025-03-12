@@ -142,6 +142,9 @@ function ButtonSection({
       )}
       <div className="grid grid-cols-3 gap-2 mt-2">
         {!modal && (
+          <ActionButton handleClick={handleReset} label="Reset" color="red" />
+        )}
+        {!modal && (
           <ActionButton
             color={"blue"}
             handleClick={handleAddToUplist}
@@ -164,13 +167,7 @@ function ButtonSection({
         {!modal && (
           <StaticButton handleClick={handleUndo} label="Undo" color="violet" />
         )}
-        {!modal && (
-          <ActionButton
-            handleClick={handleReset}
-            label="Reset"
-            color="emerald"
-          />
-        )}
+
         {!modal && (
           <button
             onClick={() => {
