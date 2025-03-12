@@ -34,7 +34,7 @@ function ButtonSection({
   const handleAddToUplist = async (name) => {
     try {
       if (name == "") {
-        throw new Error("Please provide a name");
+        throw new Error("Please provide a name. ");
       }
       const newName = formatInput(name);
 
@@ -59,12 +59,14 @@ function ButtonSection({
     try {
       const response = await fetch(`${URL}/skip`, { method: "PATCH" });
       if (!response.ok) {
-        throw new Error(`HTTP Error. Status code is ${response.status}`);
+        throw new Error(
+          `HTTP request error. Error is skiping ${response.status}`
+        );
       }
       const data = await response.json();
       setUplist(data.uplist);
-    } catch (error) {
-      console.error(`Error in skipping: Status code is ${error.message}`);
+    } catch (err) {
+      console.error(err.message);
     }
   };
   const handleRemoval = async (name) => {
@@ -73,14 +75,16 @@ function ButtonSection({
         method: "DELETE",
       });
       if (!response.ok) {
-        throw new Error("No person was removed");
+        throw new Error(
+          `HTTP request error. No person was removed status: ${response.status}`
+        );
       }
       const data = await response.json();
       setUplist(data.uplist);
 
       setName("");
     } catch (err) {
-      console.error(`HTTP request failed. ${err.message}`);
+      console.error(err.message);
     }
   };
   const handleInsert = async (name, position) => {
@@ -90,16 +94,16 @@ function ButtonSection({
         { method: "PATCH" }
       );
       if (!response.ok) {
-        throw new Error(`Couldn't insert person.`);
+        throw new Error(
+          `HTTP request error. Couldn't insert person. ${response.status}`
+        );
       }
       const data = await response.json();
       setUplist(data.uplist);
 
       setName("");
     } catch (err) {
-      console.error(
-        `HTTP request error. status: ${err.status} message: ${err.message}`
-      );
+      console.error(err.message);
     }
   };
 
@@ -110,24 +114,26 @@ function ButtonSection({
     try {
       const response = await fetch(`${URL}/undo`, { method: "PATCH" });
       if (!response.ok) {
-        throw new Error(`Couldn't undo take up`);
+        throw new Error(`Couldn't undo take up. status: ${response.status}`);
       }
       const data = await response.json();
       setUplist(data.uplist);
     } catch (err) {
-      console.error(`Status: ${err.status} message: ${err.message}`);
+      console.error(err.message);
     }
   };
   const handleReset = async () => {
     try {
       const response = await fetch(`${URL}/reset`, { method: "PATCH" });
       if (!response.ok) {
-        throw new Error(`Couldn't reset list`);
+        throw new Error(
+          `HTTP request error. Couldn't reset list. Status: ${response.status}`
+        );
       }
       const data = await response.json();
       setUplist(data.uplist);
     } catch (err) {
-      console.error(`Status: ${err.status} message: ${err.message}`);
+      console.error(err.message);
     }
   };
   return (
