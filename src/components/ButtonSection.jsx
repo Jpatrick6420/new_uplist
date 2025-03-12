@@ -6,8 +6,6 @@ import ActionButton from "./ActionButton";
 import StaticButton from "./StaticButton";
 import { formatInput } from "../helper_functions/helpers";
 
-// const BUTTONSTIMEOUT = 10;
-
 function ButtonSection({
   uplist,
   setUplist,
@@ -17,20 +15,6 @@ function ButtonSection({
   modal,
   setModal,
 }) {
-  // const [modal, setModal] = useState(false);
-  // const [isUpdated, setIsUpdated] = useState(false);
-
-  // const toggleUpdate = async () => {
-  //   await getData();
-  //   setIsUpdated(true);
-
-  //   const uplistIsCurrent = () => {
-  //     setIsUpdated(false);
-  //     setModal(false);
-  //   };
-
-  //   setTimeout(uplistIsCurrent, 1000 * BUTTONSTIMEOUT);
-  // };
   const handleAddToUplist = async (name) => {
     try {
       if (name == "") {
@@ -184,16 +168,6 @@ function ButtonSection({
             Insert
           </button>
         )}
-        {/* {!isUpdated && (
-          <div className="w-full col-span-3 my-2">
-            <button
-              onClick={() => toggleUpdate()}
-              className=" bg-green-500 hover:bg-green-300 px-1 py-0.5 text-stone-100 w-full"
-            >
-              Update
-            </button>
-          </div>
-        )} */}
       </div>
     </div>
   );
