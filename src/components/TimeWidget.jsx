@@ -59,9 +59,12 @@ function TimeWidget({ uplist }) {
 
   useEffect(
     function () {
-      const now = new Date();
-      const formattedNow = now.toLocaleTimeString("en-US");
-      setTime(formattedNow);
+      const setUpdateTime = () => {
+        const now = new Date();
+        const formattedNow = now.toLocaleTimeString("en-US");
+        setTime(formattedNow);
+      };
+      setUpdateTime();
     },
     [uplist]
   );
