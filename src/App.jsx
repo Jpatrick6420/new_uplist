@@ -46,7 +46,7 @@ function App() {
   return (
     <section className="flex justify-center items-center max-w-screen min-h-[100dvh] bg-blue-200 overflow-x-hidden ">
       <section className="border-blue-200 border-2 p-2 relative bg-stone-100 shadow-lg shadow-gray-900">
-        <TimeWidget />
+        <TimeWidget key={uplist.length} />
         <NameInput handleChange={setName} inputValue={name} />
         {!isUpdated && (
           <div className="w-full col-span-3 my-2">
