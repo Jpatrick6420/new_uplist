@@ -1,4 +1,4 @@
-import { useState } from "react";
+// import { useState } from "react";
 /* eslint-disable react/prop-types */
 
 import PositionInput from "./PositionInput";
@@ -6,88 +6,133 @@ import ActionButton from "./ActionButton";
 import StaticButton from "./StaticButton";
 import { formatInput } from "../helper_functions/helpers";
 
-const BUTTONSTIMEOUT = 10;
+// const BUTTONSTIMEOUT = 10;
 
-function ButtonSection({ getData, uplist, setUplist, setName, name, URL }) {
-  const [modal, setModal] = useState(false);
-  const [isUpdated, setIsUpdated] = useState(false);
+function ButtonSection({
+  uplist,
+  setUplist,
+  setName,
+  name,
+  URL,
+  modal,
+  setModal,
+}) {
+  // const [modal, setModal] = useState(false);
+  // const [isUpdated, setIsUpdated] = useState(false);
 
-  const toggleUpdate = async () => {
-    await getData();
-    setIsUpdated(true);
+  // const toggleUpdate = async () => {
+  //   await getData();
+  //   setIsUpdated(true);
 
-    const uplistIsCurrent = () => {
-      setIsUpdated(false);
-      setModal(false);
-    };
+  //   const uplistIsCurrent = () => {
+  //     setIsUpdated(false);
+  //     setModal(false);
+  //   };
 
-    setTimeout(uplistIsCurrent, 1000 * BUTTONSTIMEOUT);
-  };
+  //   setTimeout(uplistIsCurrent, 1000 * BUTTONSTIMEOUT);
+  // };
   const handleAddToUplist = async (name) => {
-    if (name == "") return;
-    const newName = formatInput(name);
+    try {
+      if (name == "") {
+        throw new Error("Please provide a name");
+      }
+      const newName = formatInput(name);
 
-    const newList = [...uplist];
-    if (!newList.includes(newName)) {
-      const response = await fetch(`${URL}/add/${newName}`, {
-        method: "PATCH",
-      });
-      const data = await response.json();
+      const newList = [...uplist];
+      if (!newList.includes(newName)) {
+        const response = await fetch(`${URL}/add/${newName}`, {
+          method: "POST",
+        });
+        if (!response.ok) {
+          throw new Error("Error in retrieving uplist");
+        }
+        const data = await response.json();
 
-      setUplist(data);
+        setUplist(data.uplist);
+      }
+      setName("");
+    } catch (err) {
+      console.error(`HTTP request error.  message: ${err.message}`);
     }
-    setName("");
   };
   const handleSkip = async () => {
-    const response = await fetch(`${URL}skip`, { method: "PATCH" });
-    const data = await response.json();
-    setUplist(data);
+    try {
+      const response = await fetch(`${URL}/skip`, { method: "PATCH" });
+      if (!response.ok) {
+        throw new Error(`HTTP Error. Status code is ${response.status}`);
+      }
+      const data = await response.json();
+      setUplist(data.uplist);
+    } catch (error) {
+      console.error(`Error in skipping: Status code is ${error.message}`);
+    }
   };
-  const handleRemoval = (name) => {
-    const removeName = async (name) => {
-      const response = await fetch(`${URL}delete/${formatInput(name)}`, {
+  const handleRemoval = async (name) => {
+    try {
+      const response = await fetch(`${URL}/delete/${formatInput(name)}`, {
         method: "DELETE",
       });
+      if (!response.ok) {
+        throw new Error("No person was removed");
+      }
       const data = await response.json();
-      setUplist(data);
-    };
-    removeName(name);
+      setUplist(data.uplist);
 
-    setName("");
+      setName("");
+    } catch (err) {
+      console.error(`HTTP request failed. ${err.message}`);
+    }
   };
-  const handleInsert = (name, position) => {
-    const insertPerson = async (userName, userPosition) => {
+  const handleInsert = async (name, position) => {
+    try {
       const response = await fetch(
-        `${URL}insert/${formatInput(userName)}/${userPosition}`,
+        `${URL}/insert/${formatInput(name)}/${position}`,
         { method: "PATCH" }
       );
+      if (!response.ok) {
+        throw new Error(`Couldn't insert person.`);
+      }
       const data = await response.json();
-      setUplist(data);
-    };
-    insertPerson(name, position);
+      setUplist(data.uplist);
 
-    setName("");
+      setName("");
+    } catch (err) {
+      console.error(
+        `HTTP request error. status: ${err.status} message: ${err.message}`
+      );
+    }
   };
 
   const toggleModal = () => {
     setModal((prev) => !prev);
   };
-  const handleUndo = () => {
-    const undoRemoval = async () => {
-      const response = await fetch(`${URL}undo`, { method: "PATCH" });
+  const handleUndo = async () => {
+    try {
+      const response = await fetch(`${URL}/undo`, { method: "PATCH" });
+      if (!response.ok) {
+        throw new Error(`Couldn't undo take up`);
+      }
       const data = await response.json();
-      setUplist(data);
-    };
-    undoRemoval();
+      setUplist(data.uplist);
+    } catch (err) {
+      console.error(`Status: ${err.status} message: ${err.message}`);
+    }
   };
   const handleReset = async () => {
-    const response = await fetch(`${URL}reset`, { method: "PATCH" });
-    const data = await response.json();
-    setUplist(data);
+    try {
+      const response = await fetch(`${URL}/reset`, { method: "PATCH" });
+      if (!response.ok) {
+        throw new Error(`Couldn't reset list`);
+      }
+      const data = await response.json();
+      setUplist(data.uplist);
+    } catch (err) {
+      console.error(`Status: ${err.status} message: ${err.message}`);
+    }
   };
   return (
     <div className="my-4">
-      {modal && isUpdated && (
+      {modal && (
         <PositionInput
           label="Position"
           handler={handleInsert}
@@ -96,7 +141,7 @@ function ButtonSection({ getData, uplist, setUplist, setName, name, URL }) {
         />
       )}
       <div className="grid grid-cols-3 gap-2 mt-2">
-        {isUpdated && !modal && (
+        {!modal && (
           <ActionButton
             color={"blue"}
             handleClick={handleAddToUplist}
@@ -104,11 +149,11 @@ function ButtonSection({ getData, uplist, setUplist, setName, name, URL }) {
             item={name}
           />
         )}
-        {!modal && isUpdated && (
+        {!modal && (
           <StaticButton handleClick={handleSkip} label="Take Up" type="red" />
         )}
 
-        {!modal && isUpdated && (
+        {!modal && (
           <ActionButton
             handleClick={handleRemoval}
             label="Scratch"
@@ -116,17 +161,17 @@ function ButtonSection({ getData, uplist, setUplist, setName, name, URL }) {
             item={name}
           />
         )}
-        {!modal && isUpdated && (
+        {!modal && (
           <StaticButton handleClick={handleUndo} label="Undo" color="violet" />
         )}
-        {!modal && isUpdated && (
+        {!modal && (
           <ActionButton
             handleClick={handleReset}
             label="Reset"
             color="emerald"
           />
         )}
-        {!modal && isUpdated && (
+        {!modal && (
           <button
             onClick={() => {
               toggleModal();
@@ -136,7 +181,7 @@ function ButtonSection({ getData, uplist, setUplist, setName, name, URL }) {
             Insert
           </button>
         )}
-        {!isUpdated && (
+        {/* {!isUpdated && (
           <div className="w-full col-span-3 my-2">
             <button
               onClick={() => toggleUpdate()}
@@ -145,7 +190,7 @@ function ButtonSection({ getData, uplist, setUplist, setName, name, URL }) {
               Update
             </button>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
